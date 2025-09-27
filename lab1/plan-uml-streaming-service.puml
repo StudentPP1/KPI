@@ -1,0 +1,117 @@
+@startuml
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+entity Actor {
+  *actor_id : UUID
+  --
+  name : string
+  surname : string
+  biography : text
+}
+
+entity Director {
+  *director_id : UUID
+  --
+  name : string
+  surname : string
+  biography : text
+}
+
+entity Movie {
+  *movie_id : UUID
+  --
+  title : string
+  description : text
+  year : int
+  rating : float
+  director_id : UUID 
+}
+
+entity Performance {
+  *performance_id : UUID
+  --
+  character_name : string
+  description : text
+  actor_id : UUID 
+  movie_id : UUID 
+}
+
+entity Subscription_Plan {
+  *subscription_plan_id : UUID
+  --
+  name : string
+  description : text
+  price : decimal
+  duration : int  
+}
+
+entity Included_Movie {
+  --
+  movie_id : UUID 
+  subscription_plan_id : UUID 
+}
+
+entity User {
+  *user_id : UUID
+  --
+  name : string
+  surname : string
+  email : string
+  password : string
+  birthday : date
+  user_subscription_id : UUID 
+}
+
+entity User_Subscription {
+  *user_subscription_id : UUID
+  --
+  user_id : UUID 
+  subscription_plan_id : UUID 
+  start_time : datetime
+  end_time : datetime
+  status : SubscriptionStatus
+}
+
+entity Payment {
+  *payment_id : UUID
+  --
+  timestamp : datetime
+  amount : decimal
+  status : PaymentStatus
+  subscription_plan_id : UUID 
+  user_id : UUID 
+}
+
+' Performance / casting
+Actor     "1" *-- "1..*" Performance : plays
+Movie     "1" o-- "0..*" Performance : has_role
+Director  "1" *-- "1..*" Movie       : directs
+
+' Plan and included movies
+Movie     "1" *-- "1..*" Included_Movie : included_in
+Subscription_Plan      "1" *-- "1..*" Included_Movie : contains
+
+' User subscriptions
+User      "1" o-- "0..*" User_Subscription : has_subscriptions
+Subscription_Plan      "1" *-- "1..1" User_Subscription : chosen_as
+
+' Payments
+User      "1" o-- "0..*" Payment : makes
+Subscription_Plan      "1" *-- "1..1" Payment : paid_for
+
+' enums usage
+SubscriptionStatus <.. User_Subscription : uses
+PaymentStatus      <.. Payment : uses
+@enduml
