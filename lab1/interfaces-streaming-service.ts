@@ -32,16 +32,16 @@ interface Director {
 interface Movie {
   movie_id: UUID;              // PK
   title: string;
-  description?: string;
+  description: string;
   year: number;
   rating?: number;
-  director_id: UUID;           // FK 
+  director_id: UUID;           // FK
 }
 
 interface Performance {
   performance_id: UUID;        // PK
-  character_name?: string;
-  description?: string;
+  character_name: string;
+  description: string;
   actor_id: UUID;              // FK 
   movie_id: UUID;              // FK 
 }
@@ -49,14 +49,14 @@ interface Performance {
 interface SubscriptionPlan {
   subscription_plan_id: UUID;  // PK
   name: string;
-  description?: string;
+  description: string;
   price: number;               
   duration: number;            
 }
 
 
 interface IncludedMovie {
-  movie_id: UUID;              // FK (PK part)
+  movie_id: UUID;              // FK (PK part) 
   subscription_plan_id: UUID;  // FK (PK part)
 }
 
@@ -66,7 +66,7 @@ interface User {
   surname: string;
   email: string;
   password: string;       
-  birthday?: DateISO;
+  birthday: DateISO;
   user_subscription_id?: UUID; // FK 
 }
 
