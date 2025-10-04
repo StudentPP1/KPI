@@ -1,5 +1,4 @@
 @startuml
-
 enum SubscriptionStatus {
   ACTIVE
   CANCELLED
@@ -59,8 +58,8 @@ entity Subscription_Plan {
 
 entity Included_Movie {
   --
-  movie_id : UUID 
-  subscription_plan_id : UUID 
+  *movie_id : UUID 
+  *subscription_plan_id : UUID 
 }
 
 entity User {
@@ -69,9 +68,8 @@ entity User {
   name : string
   surname : string
   email : string
-  password : string
+  password_hash : string
   birthday : date
-  user_subscription_id : UUID 
 }
 
 entity User_Subscription {
@@ -87,20 +85,19 @@ entity User_Subscription {
 entity Payment {
   *payment_id : UUID
   --
-  timestamp : datetime
+  paid_at : datetime
   amount : decimal
   status : PaymentStatus
-  subscription_plan_id : UUID 
-  user_id : UUID 
+  user_subscription_id : UUID 
 }
 
 ' Performance / casting
-Actor     "1" *-- "1..*" Performance : plays
+Actor     "1" o-- "0..*" Performance : plays
 Movie     "1" o-- "0..*" Performance : has_role
-Director  "1" *-- "1..*" Movie       : directs
+Director  "1" --o "0..*" Movie       : directs
 
 ' Plan and included movies
-Movie     "1" *-- "1..*" Included_Movie : included_in
+Movie     "1" o-- "0..*" Included_Movie : included_in
 Subscription_Plan      "1" *-- "1..*" Included_Movie : contains
 
 ' User subscriptions
@@ -108,8 +105,7 @@ User      "1" o-- "0..*" User_Subscription : has_subscriptions
 Subscription_Plan      "1" *-- "1..1" User_Subscription : chosen_as
 
 ' Payments
-User      "1" o-- "0..*" Payment : makes
-Subscription_Plan      "1" *-- "1..1" Payment : paid_for
+User_Subscription "1" *-- "1..*" Payment : paid_for
 
 ' enums usage
 SubscriptionStatus <.. User_Subscription : uses

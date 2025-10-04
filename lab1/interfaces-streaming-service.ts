@@ -1,6 +1,7 @@
-type UUID = string;
+type UUID =
+  `${string & { length: 8 }}-${string & { length: 4 }}-${string & { length: 4 }}-${string & { length: 4 }}-${string & { length: 12 }}`;
 type DateISO = `${number}-${number}-${number}`; // YYYY-MM-DD
-type DateTimeISO = `${number}-${number}-${number}T${number}:${number}:${number}Z`; // ISO 8601 UTC
+type DateTimeISO = `${number}-${number}-${number}T${number}:${number}:${number}Z`; // YYYY-MM-DDTHH:MM:SSZ
 
 enum SubscriptionStatus {
   ACTIVE = "ACTIVE",
@@ -22,11 +23,12 @@ interface Actor {
   biography?: string;
 }
 
-interface Director {
-  director_id: UUID;           // PK
-  name: string;
-  surname: string;
-  biography?: string;
+interface Performance {
+  performance_id: UUID;        // PK
+  character_name: string;
+  description: string;
+  actor_id: UUID;              // FK 
+  movie_id: UUID;              // FK 
 }
 
 interface Movie {
@@ -38,12 +40,16 @@ interface Movie {
   director_id: UUID;           // FK
 }
 
-interface Performance {
-  performance_id: UUID;        // PK
-  character_name: string;
-  description: string;
-  actor_id: UUID;              // FK 
-  movie_id: UUID;              // FK 
+interface Director {
+  director_id: UUID;           // PK
+  name: string;
+  surname: string;
+  biography?: string;
+}
+
+interface IncludedMovie {
+  movie_id: UUID;              // FK (PK part) 
+  subscription_plan_id: UUID;  // FK (PK part)
 }
 
 interface SubscriptionPlan {
@@ -52,22 +58,6 @@ interface SubscriptionPlan {
   description: string;
   price: number;               
   duration: number;            
-}
-
-
-interface IncludedMovie {
-  movie_id: UUID;              // FK (PK part) 
-  subscription_plan_id: UUID;  // FK (PK part)
-}
-
-interface User {
-  user_id: UUID;               // PK
-  name: string;
-  surname: string;
-  email: string;
-  password: string;       
-  birthday: DateISO;
-  user_subscription_id?: UUID; // FK 
 }
 
 interface UserSubscription {
@@ -81,9 +71,17 @@ interface UserSubscription {
 
 interface Payment {
   payment_id: UUID;            // PK
-  timestamp: DateTimeISO;
+  paid_at: DateTimeISO;
   amount: number;
   status: PaymentStatus;
   subscription_plan_id: UUID;  // FK
-  user_id: UUID;               // FK 
+}
+
+interface User {
+  user_id: UUID;               // PK
+  name: string;
+  surname: string;
+  email: string;
+  password: string;       
+  birthday: DateISO;
 }
