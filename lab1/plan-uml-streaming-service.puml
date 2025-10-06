@@ -102,10 +102,10 @@ Subscription_Plan      "1" *-- "1..*" Included_Movie : contains
 
 ' User subscriptions
 User      "1" o-- "0..*" User_Subscription : has_subscriptions
-Subscription_Plan      "1" *-- "1..1" User_Subscription : chosen_as
+Subscription_Plan      "1" *-- "1..n" User_Subscription : chosen_as
 
 ' Payments
-User_Subscription "1" *-- "1..*" Payment : paid_for
+User_Subscription "1" o-- "0..*" Payment : paid_for
 
 ' enums usage
 SubscriptionStatus <.. User_Subscription : uses
