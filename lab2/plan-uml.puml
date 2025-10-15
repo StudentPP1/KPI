@@ -1,0 +1,50 @@
+@startuml
+left to right direction
+
+actor User
+actor Admin
+
+' --- Use cases (з alias) ---
+usecase "login in system"            as UC_Login
+usecase "view movie info"            as VMInfo
+usecase "get support"                as Support
+usecase "watch movie"                as Watch
+usecase "make payment"               as Pay
+usecase "manage subscription"        as ManageSub
+usecase "view subscription info"     as VSubInfo
+usecase "cancel subscription"        as CancelSub
+usecase "buy subscription"           as BuySub
+usecase "view subscription plans"    as ViewPlans
+
+usecase "manage user problems"       as ManageProblems
+usecase "manage movie"               as ManageMovie
+usecase "manage subscription plan"   as ManagePlan
+
+' --- Associations ---
+User  -- UC_Login
+User  -- VMInfo
+User  -- Support
+User  -- Watch
+User  -- Pay
+User  -- ManageSub
+User  -- BuySub
+User  -- ViewPlans
+
+Admin -- ManageProblems
+Admin -- ManageMovie
+Admin -- ManagePlan
+
+' --- <<extend>> ---
+VSubInfo   ..> ManageSub : <<extend>>
+CancelSub  ..> ManageSub : <<extend>>
+BuySub     ..> ManageSub : <<extend>>
+
+' --- <<Use>> ---
+Support    ..> ManageProblems : <<use>>
+Watch      ..> BuySub         : <<use>>
+Pay        ..> BuySub         : <<use>>
+ViewPlans  ..> ManagePlan     : <<Use>>
+BuySub     ..> ManagePlan     : <<Use>>
+ManageMovie ..> ManagePlan    : <<Use>>
+
+@enduml
