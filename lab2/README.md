@@ -46,11 +46,12 @@
 | --------------------------- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :--: |
 | **login in system**         |     |  X  |     |     |     |     |     |     |     |      |
 | **get support**             |     |  X  |     |     |     |  X  |     |     |     |      |
-| **make payment**            |     |  X  |  X  |     |     |     |  X  |     |     |      |
-| **watch movie**             |  X  |  X  |     |  X  |     |     |     |  X  |     |   X  |
+| **make payment**            |     |  X  |  X  |     |     |     |     |     |     |      |
+| **view payment info**       |     |  X  |  X  |     |     |     |  X  |     |     |      |
+| **watch movie**             |  X  |  X  |     |  X  |     |     |     |     |     |   X  |
 | **view movie info**         |     |     |     |     |     |     |     |     |     |   X  |
 | **view subscription plans** |     |     |     |     |     |     |     |     |  X  |      |
-| **manage subscription**     |  X  |  X  |  X  |     |  X  |     |  X  |  X  |  X  |      |
-| **view subscription info**  |  X  |  X  |     |     |     |     |  X  |  X  |     |      |
-| **buy subscription**        |  X  |  X  |  X  |     |     |     |  X  |  X  |  X  |      |
+| **manage subscription**     |  X  |  X  |  X  |     |  X  |     |     |  X  |  X  |      |
+| **view subscription info**  |  X  |  X  |     |     |     |     |     |  X  |     |      |
+| **buy subscription**        |  X  |  X  |  X  |     |     |     |     |     |  X  |      |
 | **cancel subscription**     |  X  |  X  |     |     |  X  |     |     |  X  |     |      |
