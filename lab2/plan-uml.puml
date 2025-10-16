@@ -4,18 +4,20 @@ left to right direction
 actor User
 actor Admin
 
-' --- Use cases (з alias) ---
+' --- Use cases ---
 usecase "login in system"            as UC_Login
 usecase "view movie info"            as VMInfo
 usecase "get support"                as Support
 usecase "watch movie"                as Watch
 usecase "make payment"               as Pay
+usecase "view payment info"          as PayInfo
 usecase "manage subscription"        as ManageSub
 usecase "view subscription info"     as VSubInfo
 usecase "cancel subscription"        as CancelSub
 usecase "buy subscription"           as BuySub
 usecase "view subscription plans"    as ViewPlans
 
+usecase "login in system"       as UC_AdminLogin
 usecase "manage user problems"       as ManageProblems
 usecase "manage movie"               as ManageMovie
 usecase "manage subscription plan"   as ManagePlan
@@ -26,10 +28,12 @@ User  -- VMInfo
 User  -- Support
 User  -- Watch
 User  -- Pay
+User  -- PayInfo
 User  -- ManageSub
 User  -- BuySub
 User  -- ViewPlans
 
+Admin -- UC_AdminLogin
 Admin -- ManageProblems
 Admin -- ManageMovie
 Admin -- ManagePlan
@@ -45,6 +49,7 @@ Watch      ..> BuySub         : <<use>>
 Pay        ..> BuySub         : <<use>>
 ViewPlans  ..> ManagePlan     : <<Use>>
 BuySub     ..> ManagePlan     : <<Use>>
-ManageMovie ..> ManagePlan    : <<Use>>
+ManagePlan ..> ManageMovie    : <<Use>>
+PayInfo ..> Pay               : <<Use>>
 
 @enduml
