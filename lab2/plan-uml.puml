@@ -1,55 +1,74 @@
 @startuml
 left to right direction
 
-actor User
-actor Admin
+actor "User" as User
+actor "Admin" as Admin
 
-' --- Use cases ---
-usecase "login in system"            as UC_Login
-usecase "view movie info"            as VMInfo
-usecase "get support"                as Support
-usecase "watch movie"                as Watch
-usecase "make payment"               as Pay
-usecase "view payment info"          as PayInfo
-usecase "manage subscription"        as ManageSub
-usecase "view subscription info"     as VSubInfo
-usecase "cancel subscription"        as CancelSub
-usecase "buy subscription"           as BuySub
-usecase "view subscription plans"    as ViewPlans
+' ==== User Use Cases ====
+usecase "sign up" as UC_SignUp
+usecase "sign up using email & password" as UC_SignUpEmail
+usecase "sign up via Google" as UC_SignUpGoogle
 
-usecase "login in system"       as UC_AdminLogin
-usecase "manage user problems"       as ManageProblems
-usecase "manage movie"               as ManageMovie
-usecase "manage subscription plan"   as ManagePlan
+usecase "log in" as UC_Login
+usecase "log in using email & password" as UC_LoginEmail
+usecase "log in via Google" as UC_LoginGoogle
 
-' --- Associations ---
-User  -- UC_Login
-User  -- VMInfo
-User  -- Support
-User  -- Watch
-User  -- Pay
-User  -- PayInfo
-User  -- ManageSub
-User  -- BuySub
-User  -- ViewPlans
+usecase "view movie info" as UC_ViewMovie
+usecase "watch movie" as UC_Watch
+usecase "make payment" as UC_Payment
+usecase "view payment info" as UC_PayInfo
+
+usecase "manage subscription" as UC_ManageSub
+usecase "view subscription info" as UC_ViewSub
+usecase "cancel subscription" as UC_CancelSub
+usecase "buy subscription" as UC_BuySub
+usecase "view subscription plans" as UC_ViewPlans
+
+usecase "get support" as UC_Support
+
+' ==== Admin Use Cases ====
+usecase "log in" as UC_AdminLogin
+usecase "log in using email & password" as UC_AdminLoginEmail
+usecase "support user" as UC_SupportUser
+usecase "manage movie" as UC_ManageMovie
+usecase "manage subscription plan" as UC_ManagePlan
+
+' ==== Associations ====
+User -- UC_SignUp
+User -- UC_Login
+User -- UC_ViewMovie
+User -- UC_Watch
+User -- UC_Payment
+User -- UC_PayInfo
+User -- UC_ManageSub
+User -- UC_ViewPlans
+User -- UC_Support
 
 Admin -- UC_AdminLogin
-Admin -- ManageProblems
-Admin -- ManageMovie
-Admin -- ManagePlan
+Admin -- UC_SupportUser
+Admin -- UC_ManageMovie
+Admin -- UC_ManagePlan
 
-' --- <<extend>> ---
-VSubInfo   ..> ManageSub : <<extend>>
-CancelSub  ..> ManageSub : <<extend>>
-BuySub     ..> ManageSub : <<extend>>
+' ==== Extends ====
+UC_SignUpEmail ..> UC_SignUp : <<extend>>
+UC_SignUpGoogle ..> UC_SignUp : <<extend>>
 
-' --- <<Use>> ---
-Support    ..> ManageProblems : <<use>>
-Watch      ..> BuySub         : <<use>>
-Pay        ..> BuySub         : <<use>>
-ViewPlans  ..> ManagePlan     : <<Use>>
-BuySub     ..> ManagePlan     : <<Use>>
-ManagePlan ..> ManageMovie    : <<Use>>
-PayInfo ..> Pay               : <<Use>>
+UC_LoginEmail ..> UC_Login : <<extend>>
+UC_LoginGoogle ..> UC_Login : <<extend>>
+
+UC_ViewSub ..> UC_ManageSub : <<extend>>
+UC_CancelSub ..> UC_ManageSub : <<extend>>
+UC_BuySub ..> UC_ManageSub : <<extend>>
+
+UC_AdminLoginEmail ..> UC_AdminLogin : <<extend>>
+
+' ==== Use ====
+UC_Support ..> UC_SupportUser : <<use>>
+UC_Watch ..> UC_BuySub : <<use>>
+UC_Payment <.. UC_BuySub : <<use>>
+UC_ViewPlans ..> UC_ManagePlan : <<use>>
+UC_BuySub ..> UC_ManagePlan : <<use>>
+UC_ManageMovie ..> UC_ManagePlan : <<use>>
+UC_PayInfo ..> UC_Payment : <<use>>
 
 @enduml
