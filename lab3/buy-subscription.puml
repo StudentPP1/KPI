@@ -1,0 +1,60 @@
+@startuml
+title Buy user subscription (revised)
+autonumber
+
+actor User
+actor Admin
+participant API
+participant "Payment Service" as PS
+participant "Subscription Service" as SP
+database "DB" as DB
+
+== Admin creates subscription plan ==
+Admin -> API : create subscription plan
+activate API
+API -> SP : validate & prepare plan
+activate SP
+SP -> DB : insert plan
+DB --> SP : ok
+SP --> API : plan created
+deactivate SP
+API --> Admin : plan created (id, meta)
+deactivate API
+
+== User fetches plans ==
+User -> API : get all subscription plans
+activate API
+API -> SP : fetch all plans
+activate SP
+SP -> DB : select plans
+DB --> SP : plans
+SP --> API : plans
+deactivate SP
+API --> User : return plans
+deactivate API
+
+== User selects plan & pays ==
+User -> API : choose plan & submit payment info
+activate API
+API -> PS : charge(payment, planId, userId)
+activate PS
+
+alt payment success
+  PS --> API : success(txId, amount)
+  deactivate PS
+  API -> DB : create payment record(txId, userId, planId, amount, status=SUCCESS)
+  DB --> API : ok
+  API -> DB : create user subscription record(userId, planId, start_at, status=ACTIVE)
+  DB --> API : ok
+  API --> User : subscription created (success message)
+  deactivate API
+else payment failed
+  PS --> API : failure(reason)
+  deactivate PS
+  API -> DB : create payment record(txId?, userId, planId, status=FAILED, reason)
+  DB --> API : ok
+  API --> User : payment failed (show reason)
+  deactivate API
+end
+
+@enduml
