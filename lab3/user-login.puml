@@ -1,0 +1,37 @@
+@startuml
+title user login 
+autonumber
+
+actor User
+participant Application
+participant "Auth Service" as Auth
+database DB
+
+User -> Application : login(email, password)
+activate Application
+Application -> Auth : authenticate(email, password)
+activate Auth
+Auth -> DB : find user by email
+DB --> Auth : return user 
+Auth -> Auth : verify password hash
+
+alt password invalid
+  Auth --> Application : authentication failed
+  Application --> User : invalid credentials
+  deactivate Auth
+  deactivate Application
+else password valid
+  Auth -> DB : create session(userId, sessionId, expires_at)
+  DB --> Auth : ok
+  Auth --> Application : authentication success(sessionId)
+  deactivate Auth
+  Application --> User : login success(sessionId)
+  deactivate Application
+end
+
+destroy User
+destroy Application
+destroy Auth
+destroy DB
+
+@enduml

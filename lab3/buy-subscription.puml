@@ -1,60 +1,70 @@
 @startuml
-title Buy user subscription (revised)
+title Buy user subscription
 autonumber
 
 actor User
-actor Admin
-participant API
+participant Application
 participant "Payment Service" as PS
 participant "Subscription Service" as SP
 database "DB" as DB
 
-== Admin creates subscription plan ==
-Admin -> API : create subscription plan
-activate API
-API -> SP : validate & prepare plan
+User -> Application : get all subscription plans
+activate Application
+Application -> Application : validate authentication
+Application -> SP : fetch all subscription plans
 activate SP
-SP -> DB : insert plan
-DB --> SP : ok
-SP --> API : plan created
+SP -> SP : validate request
+SP -> DB : select all active subscription plans
+DB --> SP : return subscription plans
+SP --> Application : return subscription plan dtos
 deactivate SP
-API --> Admin : plan created (id, meta)
-deactivate API
+Application --> User : return subscription plan dtos
+deactivate Application
 
-== User fetches plans ==
-User -> API : get all subscription plans
-activate API
-API -> SP : fetch all plans
+User -> Application : choose subscription plan
+activate Application
+Application -> SP : validate subscription plan
 activate SP
-SP -> DB : select plans
-DB --> SP : plans
-SP --> API : plans
+SP -> DB : select plan by id
+DB --> SP : return subscription plan
+SP -> SP : check plan status and constraints
+SP --> Application : return subscription plan dto
 deactivate SP
-API --> User : return plans
-deactivate API
 
-== User selects plan & pays ==
-User -> API : choose plan & submit payment info
-activate API
-API -> PS : charge(payment, planId, userId)
+Application -> PS : request payment form
 activate PS
+PS --> Application : return payment form
+deactivate PS
+Application --> User : return payment form
+deactivate Application
+
+User -> PS : open payment form and input payment data
+activate PS
+PS -> PS : validate payment data and perform transaction
 
 alt payment success
-  PS --> API : success(txId, amount)
-  deactivate PS
-  API -> DB : create payment record(txId, userId, planId, amount, status=SUCCESS)
-  DB --> API : ok
-  API -> DB : create user subscription record(userId, planId, start_at, status=ACTIVE)
-  DB --> API : ok
-  API --> User : subscription created (success message)
-  deactivate API
+  PS --> Application : send success notification
+  activate Application
+  Application -> DB : create payment record(status=SUCCESS)
+  DB --> Application : ok
+  Application -> DB : create user subscription(status=ACTIVE)
+  DB --> Application : ok
+  Application --> User : return success message
+  deactivate Application
 else payment failed
-  PS --> API : failure(reason)
-  deactivate PS
-  API -> DB : create payment record(txId?, userId, planId, status=FAILED, reason)
-  DB --> API : ok
-  API --> User : payment failed (show reason)
-  deactivate API
+  PS --> Application : send failed notification
+  activate Application
+  Application -> DB : create payment record(status=FAILED)
+  DB --> Application : ok
+  Application --> User : return payment failed(reason)
+  deactivate Application
 end
+deactivate PS
+
+destroy User
+destroy Application
+destroy PS
+destroy SP
+destroy DB
 
 @enduml
