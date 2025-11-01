@@ -30,8 +30,5 @@ else password valid
 end
 
 destroy User
-destroy Application
-destroy Auth
-destroy DB
 
 @enduml

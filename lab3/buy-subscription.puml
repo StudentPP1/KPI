@@ -34,37 +34,28 @@ deactivate SP
 Application -> PS : request payment form
 activate PS
 PS --> Application : return payment form
-deactivate PS
 Application --> User : return payment form
 deactivate Application
 
 User -> PS : open payment form and input payment data
-activate PS
 PS -> PS : validate payment data and perform transaction
 
+PS --> Application : send payment notification
+deactivate PS
+activate Application
+
 alt payment success
-  PS --> Application : send success notification
-  activate Application
   Application -> DB : create payment record(status=SUCCESS)
   DB --> Application : ok
   Application -> DB : create user subscription(status=ACTIVE)
   DB --> Application : ok
   Application --> User : return success message
-  deactivate Application
 else payment failed
-  PS --> Application : send failed notification
-  activate Application
   Application -> DB : create payment record(status=FAILED)
   DB --> Application : ok
   Application --> User : return payment failed(reason)
-  deactivate Application
+deactivate Application
 end
-deactivate PS
 
 destroy User
-destroy Application
-destroy PS
-destroy SP
-destroy DB
-
 @enduml
