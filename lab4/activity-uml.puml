@@ -1,0 +1,82 @@
+
+@startuml
+title Buy user subscription (UML Activity Diagram)
+skinparam shadowing false
+skinparam monochrome true
+skinparam wrapWidth 240
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+  StartColor Black
+  EndColor Black
+}
+
+start
+
+partition "User" {
+  :Request all subscription plans;
+}
+
+partition "App" {
+  :validate authentication;
+  :fetch all subscription plans;
+}
+
+partition "Subscription Service" {
+  :validate request;
+  :return subscription plan dtos;
+}
+
+partition "User" {
+  :choose subscription plan;
+}
+
+partition "App" {
+  :choose subscription plan; 
+  :Check plan status & constraints;
+}
+
+partition "Subscription Service" {
+  :subscription plan dto;
+}
+
+partition "App" {
+  :Request payment form;
+}
+
+partition "Payment Service" {
+  :generate payment form;
+}
+
+partition "App" {
+  :payment form;
+}
+
+partition "User" {
+  :open payment form & input payment data;
+  :Waiting for payment processed;
+}
+
+partition "Payment Service" {
+  :Validate payment data and perform transaction;
+  :send payment notification;
+}
+
+partition "App" {
+  if ("Payment processed?") then (SUCCESS)
+    :success notification;
+  else (FAILED)
+    :failed notification;
+  endif
+}
+
+partition "User" {
+  if ("Success?") then (yes)
+    :open user subsciption info;
+  else (no)
+    :request payment form; 
+  endif
+}
+
+stop
+@enduml
