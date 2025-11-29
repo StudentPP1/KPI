@@ -128,12 +128,6 @@ HttpRouter --> AuthController
 HttpRouter --> UserController
 HttpRouter --> SubscriptionController
 
-Validator --> MovieController
-Validator --> PaymentController
-Validator --> AuthController
-Validator --> UserController
-Validator --> SubscriptionController
-
 AuthCore --> MovieController
 AuthCore --> UserController
 AuthCore --> SubscriptionController
@@ -174,11 +168,8 @@ UserSubscriptionRepository  --> DbPool
 [Google Auth 2.0]  as GoogleExt
 [Email Gateway]    as EmailExt
 
-StreamingService --> MovieService        : loadMovie()
-StreamingService --> SubscriptionService : checkActiveSubscription()
-
-PaymentService      --> SubscriptionService : updateSubscriptionStatus()
-SubscriptionService --> EmailSender        : sendSubscriptionEmail()
+PaymentService      --> SubscriptionService 
+SubscriptionService --> EmailSender        
 
 PaymentService --> PaymentExt
 AuthService    --> GoogleExt
