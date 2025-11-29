@@ -7,62 +7,114 @@ actor "Admin" as AdminActor
 
 () "HTTP API" as IHTTP
 
-UserActor --> IHTTP
-AdminActor --> IHTTP
+package "Web App (Frontend)" {
+
+  package "Pages" {
+    [AuthPage]
+    [HomePage]
+    [MoviePage]
+    [SubscriptionPlansPage]
+    [UserProfilePage]
+    [AdminPage]
+  }
+
+  package "Client State Stores" {
+    [AuthStore]
+    [MovieStore]
+    [SubscriptionStore]
+  }
+
+  package "API Clients" {
+    [Auth API Client]
+    [User API Client]
+    [Movie API Client]
+    [Subscription API Client]
+  }
+
+  database "LocalStorage" as LocalStorage
+
+  AuthPage --> AuthStore
+  HomePage --> MovieStore
+  MoviePage --> MovieStore
+  SubscriptionPlansPage --> SubscriptionStore
+  UserProfilePage --> AuthStore
+  AdminPage --> AuthStore
+
+  AuthStore --> LocalStorage
+  MovieStore --> LocalStorage
+  SubscriptionStore --> LocalStorage
+
+  AuthPage --> [Auth API Client]
+  UserProfilePage --> [User API Client]
+  MoviePage --> [Movie API Client]
+  HomePage --> [Movie API Client]
+  SubscriptionPlansPage --> [Subscription API Client]
+  AdminPage --> [Auth API Client]
+
+  [Auth API Client]        --> IHTTP
+  [User API Client]        --> IHTTP
+  [Movie API Client]       --> IHTTP
+  [Subscription API Client]--> IHTTP
+}
+
+UserActor  --> HomePage
+UserActor  --> MoviePage
+UserActor  --> SubscriptionPlansPage
+UserActor  --> UserProfilePage
+AdminActor --> AdminPage
 
 package "Movie Streaming Backend" {
 
-  [HTTP Router]        as HttpRouter
-  [EntryPoint Config]  as EPConfig
-  [Request Validator]  as Validator
+  [HTTP Router]           as HttpRouter
+  [EntryPoint Config]     as EPConfig
+  [Request Validator]     as Validator
   [JSON Schema Validator] as JsonValidator
-  [Auth Middleware]    as AuthCore
+  [Auth Middleware]       as AuthCore
 
   IHTTP - HttpRouter
 
   HttpRouter --> EPConfig
   HttpRouter --> Validator
   HttpRouter --> AuthCore
-  Validator --> JsonValidator
-
+  Validator  --> JsonValidator
 
   package "Movie Module" {
     [MovieController]
     [MovieService]
-    [MovieRepository]       
-    [ActorRepository]       
-    [DirectorRepository]    
-    [PerformanceRepository]  
+    [MovieRepository]
+    [ActorRepository]
+    [DirectorRepository]
+    [PerformanceRepository]
   }
 
   package "Payment Module" {
     [PaymentController]
     [PaymentService]
-    [PaymentRepository]     
+    [PaymentRepository]
   }
 
   package "Auth Module" {
     [AuthController]
     [AuthService]
-    [AuthRepository]        
+    [AuthRepository]
   }
 
   package "User Module" {
     [UserController]
     [UserService]
-    [UserRepository]         
+    [UserRepository]
   }
 
   package "Subscription Module" {
     [SubscriptionController]
     [SubscriptionService]
-    [SubscriptionPlanRepository]  
-    [IncludedMovieRepository]      
-    [UserSubscriptionRepository]   
+    [SubscriptionPlanRepository]
+    [IncludedMovieRepository]
+    [UserSubscriptionRepository]
   }
 
   package "Notification Module" {
-    [EmailSender]          
+    [EmailSender]
   }
 
   [DB Connection Pool] as DbPool
@@ -87,11 +139,11 @@ AuthCore --> UserController
 AuthCore --> SubscriptionController
 AuthCore --> PaymentController
 
-MovieController         --> MovieService
-PaymentController       --> PaymentService
-AuthController          --> AuthService
-UserController          --> UserService
-SubscriptionController  --> SubscriptionService
+MovieController        --> MovieService
+PaymentController      --> PaymentService
+AuthController         --> AuthService
+UserController         --> UserService
+SubscriptionController --> SubscriptionService
 
 MovieService --> MovieRepository
 MovieService --> ActorRepository
@@ -99,9 +151,8 @@ MovieService --> DirectorRepository
 MovieService --> PerformanceRepository
 
 PaymentService --> PaymentRepository
-
-AuthService  --> AuthRepository
-UserService  --> UserRepository
+AuthService    --> AuthRepository
+UserService    --> UserRepository
 
 SubscriptionService --> SubscriptionPlanRepository
 SubscriptionService --> IncludedMovieRepository
@@ -119,16 +170,15 @@ IncludedMovieRepository     --> DbPool
 UserSubscriptionRepository  --> DbPool
 
 [StreamingService] as StreamingService
+[Payment Provider] as PaymentExt
+[Google Auth 2.0]  as GoogleExt
+[Email Gateway]    as EmailExt
 
 StreamingService --> MovieService        : loadMovie()
 StreamingService --> SubscriptionService : checkActiveSubscription()
 
-PaymentService   --> SubscriptionService : updateSubscriptionStatus()
-SubscriptionService --> EmailSender      : sendSubscriptionEmail()
-
-[Payment Provider]      as PaymentExt
-[Google Auth 2.0]       as GoogleExt
-[Email Gateway]         as EmailExt
+PaymentService      --> SubscriptionService : updateSubscriptionStatus()
+SubscriptionService --> EmailSender        : sendSubscriptionEmail()
 
 PaymentService --> PaymentExt
 AuthService    --> GoogleExt
