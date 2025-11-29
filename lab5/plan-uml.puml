@@ -12,7 +12,6 @@ AdminActor --> IHTTP
 
 package "Movie Streaming Backend" {
 
-  ' ================= API SERVER =================
   [HTTP Router]        as HttpRouter
   [EntryPoint Config]  as EPConfig
   [Request Validator]  as Validator
@@ -27,7 +26,6 @@ package "Movie Streaming Backend" {
   Validator --> JsonValidator
 
 
-  ' ================= MOVIE MODULE =================
   package "Movie Module" {
     [MovieController]
     [MovieService]
@@ -37,28 +35,24 @@ package "Movie Streaming Backend" {
     [PerformanceRepository]  
   }
 
-  ' ================= PAYMENT MODULE =================
   package "Payment Module" {
     [PaymentController]
     [PaymentService]
     [PaymentRepository]     
   }
 
-  ' ================= AUTH MODULE =================
   package "Auth Module" {
     [AuthController]
     [AuthService]
     [AuthRepository]        
   }
 
-  ' ================= USER MODULE =================
   package "User Module" {
     [UserController]
     [UserService]
     [UserRepository]         
   }
 
-  ' ================= SUBSCRIPTION MODULE =================
   package "Subscription Module" {
     [SubscriptionController]
     [SubscriptionService]
@@ -67,18 +61,15 @@ package "Movie Streaming Backend" {
     [UserSubscriptionRepository]   
   }
 
-  ' ================= NOTIFICATION MODULE =================
   package "Notification Module" {
     [EmailSender]          
   }
 
-  ' ================= DATABASE =================
   [DB Connection Pool] as DbPool
   database "PostgreSQL" as DB
   DbPool --> DB
 }
 
-' -------- ROUTER → MODULE ENTRYPOINTS --------
 HttpRouter --> MovieController
 HttpRouter --> PaymentController
 HttpRouter --> AuthController
@@ -96,14 +87,12 @@ AuthCore --> UserController
 AuthCore --> SubscriptionController
 AuthCore --> PaymentController
 
-' -------- CONTROLLER → SERVICE --------
 MovieController         --> MovieService
 PaymentController       --> PaymentService
 AuthController          --> AuthService
 UserController          --> UserService
 SubscriptionController  --> SubscriptionService
 
-' -------- SERVICE → REPOSITORIES --------
 MovieService --> MovieRepository
 MovieService --> ActorRepository
 MovieService --> DirectorRepository
@@ -118,7 +107,6 @@ SubscriptionService --> SubscriptionPlanRepository
 SubscriptionService --> IncludedMovieRepository
 SubscriptionService --> UserSubscriptionRepository
 
-' -------- REPOSITORIES → DB POOL --------
 MovieRepository        --> DbPool
 ActorRepository        --> DbPool
 DirectorRepository     --> DbPool
@@ -130,7 +118,6 @@ SubscriptionPlanRepository  --> DbPool
 IncludedMovieRepository     --> DbPool
 UserSubscriptionRepository  --> DbPool
 
-' -------- CROSS-MODULE CALLS --------
 [StreamingService] as StreamingService
 
 StreamingService --> MovieService        : loadMovie()
@@ -139,7 +126,6 @@ StreamingService --> SubscriptionService : checkActiveSubscription()
 PaymentService   --> SubscriptionService : updateSubscriptionStatus()
 SubscriptionService --> EmailSender      : sendSubscriptionEmail()
 
-' -------- EXTERNAL SYSTEMS --------
 [Payment Provider]      as PaymentExt
 [Google Auth 2.0]       as GoogleExt
 [Email Gateway]         as EmailExt
